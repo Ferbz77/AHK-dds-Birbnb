@@ -1,4 +1,4 @@
-package dds.birbnb_ahk.entities;
+package dds.birbnb_ahk.entities.alojamientos;
 
 public enum Caracteristica {
     WIFI,

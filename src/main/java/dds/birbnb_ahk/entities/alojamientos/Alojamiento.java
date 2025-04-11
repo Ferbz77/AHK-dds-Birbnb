@@ -1,47 +1,89 @@
-package dds.birbnb_ahk.entities;
+package dds.birbnb_ahk.entities.alojamientos;
 
+import dds.birbnb_ahk.entities.ubicaciones.Direccion;
+import dds.birbnb_ahk.entities.Moneda;
+import dds.birbnb_ahk.entities.reservas.RangoFechas;
+import dds.birbnb_ahk.entities.reservas.Reserva;
+import dds.birbnb_ahk.entities.usuarios.Usuario;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(name = "alojamiento")
 
 public class Alojamiento {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @Setter
     @Getter
+
+    @ManyToOne
+    @JoinColumn(name = "anfitrion_id", nullable = false)
     private Usuario anfitrion;
+
     @Setter
     @Getter
+    @Column
     private String nombre;
+
     @Setter
     @Getter
+    @Column(columnDefinition = "TEXT") //65535 Y longtext 4gb
     private String descripcion;
+
     @Setter
     @Getter
+    @Column
     private Double precioPorNoche;
+
     @Setter
     @Getter
+    @Enumerated(EnumType.STRING) //si le quiero cambiar el nombre, le agrego @column arriba
     private Moneda moneda;
+
     @Setter
     @Getter
+    @Column(columnDefinition = "TIME")
     private LocalTime horarioCheckIn;
+
     @Setter
     @Getter
+    @Column(columnDefinition = "TIME")
     private LocalTime horarioCheckOut;
+
     @Setter
     @Getter
+    @OneToOne
+    @JoinColumn(name = "direccion_id", nullable = false)
     private Direccion direccion;
+
     @Setter
     @Getter
+    @Column
     private Integer cantHuespedesMax;
+
     @Getter
+    @ElementCollection //crea una relacion onetoMany
+    @CollectionTable(name = "alojamiento_caracteristica", joinColumns = @JoinColumn(name = "alojamiento_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "caracteristica")
     private List<Caracteristica> caracteristicas;
+
+
     @Getter
+    @OneToMany//el manytoOne tiene la FK, en este caso, las fotos
+    @JoinColumn(name = "alojamiento_id")
     private List<Foto> fotos;
+
     @Getter
+    @OneToMany(mappedBy = "alojamiento") //para relaciones bidireccionales y que coincida cobn el nombre del atributo en la clase
     private List<Reserva> reservas;
 
     public Alojamiento(){
